@@ -12,10 +12,16 @@ func _ready() -> void:
 
 func _on_socket_connected(ns: String) -> void:
 	print("Connected to namespace: %s" % ns)
-	client.emit("create-room", { "gamemode": "wisecrack" }, "/game")
+
 
 func _on_event_received(event: String, data: Variant, ns: String) -> void:
 	print("Event %s with %s as data received" % [event, data])
+	print(data)
+	data = data[0]
+	if event == "created-room":
+		$Button.hide();
+		$Label2.set_text(str("room code: ", data["roomcode"]));
+		$Label2.show();
 
 func _on_namespace_connection_error(ns: String, data: Variant) -> void:
 	print("Connection error for %s: %s" % [ns, data])
@@ -24,3 +30,8 @@ func _notification(what):
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:
 		await client.disconnect_socket()
 		get_tree().quit() # default behavior
+
+
+
+func _on_create_session_down() -> void:
+	client.emit("create-room", { "gamemode": "wisecrack" }, "/game")
