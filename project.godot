@@ -14,3 +14,7 @@ config/name="snackbox-games-display-godot"
 run/main_scene="uid://d1m1q24bbaec5"
 config/features=PackedStringArray("4.4", "Forward Plus")
 config/icon="res://icon.svg"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/godot-socketio/plugin.cfg")
