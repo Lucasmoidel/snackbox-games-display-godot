@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://d1m1q24bbaec5"]
+[gd_scene load_steps=3 format=3 uid="uid://d1m1q24bbaec5"]
 
 [ext_resource type="Script" uid="uid://cnndsw4a2byu4" path="res://main.gd" id="1_ig7tw"]
+[ext_resource type="Script" uid="uid://bgeqgbrxhjvmj" path="res://addons/godot-socketio/socketio.gd" id="2_0xm2m"]
 
 [node name="main" type="Control"]
 layout_mode = 3
@@ -17,3 +18,9 @@ offset_right = 1169.0
 offset_bottom = 661.0
 theme_override_font_sizes/font_size = 400
 text = "asdsdfasdf"
+
+[node name="SocketIO" type="Node" parent="."]
+script = ExtResource("2_0xm2m")
+default_namespace = "/game"
+base_url = "http://localhost:4009"
+metadata/_custom_type_script = "uid://bgeqgbrxhjvmj"

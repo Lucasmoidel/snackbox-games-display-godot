@@ -1,30 +1,19 @@
 extends Control
+@onready var client: SocketIO = $SocketIO
 
-var client = SocketIOClient
-var backendURL: String
+func _ready() -> void:
+  client.socket_connected.connect(_on_socket_connected)
+  client.event_received.connect(_on_event_received)
+  client.namespace_connection_error.connect(_on_namespace_connection_error)
+  # Connect to /game with auth data
+  client.connect_socket({"auth":"hamburgerandfries"})
 
-func _ready():
-	backendURL = "http://localhost:4009/socket.io"
-	client = SocketIOClient.new(backendURL, {"token": "hamburgerandfries"})
-	client.on_engine_connected.connect(on_socket_ready)
-	client.on_connect.connect(on_socket_connect)
-	client.on_event.connect(on_socket_event)
-	add_child(client)
+func _on_socket_connected(ns: String) -> void:
+  print("Connected to namespace: %s" % ns)
+  client.emit("create-room", { "gamemode": "wisecrack" }, "/game")
 
-func _exit_tree():
-	client.socketio_disconnect()
+func _on_event_received(event: String, data: Variant, ns: String) -> void:
+  print("Event %s with %s as data received" % [event, data])
 
-func on_socket_ready(_sid: String):
-	client.socketio_connect()
-
-func on_socket_connect(_payload: Variant, _name_space, error: bool):
-	if error:
-		push_error("Failed to connect to backend!")
-	else:
-		print("Socket connected")
-		client.socketio_send("create-room", "wisecrack", "/game");
-
-func on_socket_event(event_name: String, payload: Variant, _name_space):
-	print (event_name, payload)
-	#if event_name == "create-room":
-		#print(payload)
+func _on_namespace_connection_error(ns: String, data: Variant) -> void:
+  print("Connection error for %s: %s" % [ns, data])
