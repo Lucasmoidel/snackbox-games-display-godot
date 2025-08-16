@@ -4,7 +4,7 @@ var client = SocketIOClient
 var backendURL: String
 
 func _ready():
-	backendURL = "http://games-server:4009/socket.io"
+	backendURL = "http://localhost:4009/socket.io"
 	client = SocketIOClient.new(backendURL, {"token": "hamburgerandfries"})
 	client.on_engine_connected.connect(on_socket_ready)
 	client.on_connect.connect(on_socket_connect)
