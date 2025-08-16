@@ -13,6 +13,7 @@ config_version=5
 config/name="snackbox-games-display-godot"
 run/main_scene="uid://d1m1q24bbaec5"
 config/features=PackedStringArray("4.4", "Forward Plus")
+boot_splash/show_image=false
 config/icon="res://icon.svg"
 
 [editor_plugins]
