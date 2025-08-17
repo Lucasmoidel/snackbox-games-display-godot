@@ -39,20 +39,22 @@ func _on_event_received(event: String, data: Variant, ns: String) -> void:
 	if event == "player-joined":
 		var player_exists: bool = false
 		for i in players:
-			if i.name == data["username"]:
+			if i.id == data["id"]:
+				i.name = data["username"]
 				i.connected = true
 				player_exists = true
 				break
 		if !player_exists:
 			players.append(Player.new(data["username"], data["id"]))
-		$Label3.set_text("players:")
-		for i in players:
-			if i.connected:
-				$Label3.set_text(str($Label3.text, " ", i.name))
+		update_user_list()
 	if event == "player-left":
 		for i in players:
-			if i.name == data["username"]:
+			if i.id == data["id"]:
 				i.connected = false
+				print(i.name, "disconnected")
+		update_user_list()
+
+
 		
 
 func _on_namespace_connection_error(ns: String, data: Variant) -> void:
@@ -65,6 +67,27 @@ func _notification(what):
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:
 		await client.disconnect_socket()
 		get_tree().quit() # default behavior
+
+func update_user_list():
+	for i in $HBoxContainer.get_children():
+		i.queue_free()
+	for i in players:
+		var button = Button.new()
+		button.set_text(i.name)
+		button.theme = load("res://button_theme.tres")
+		button.pressed.connect(kick_player.bind(i.id, "idk ;]"))
+		$HBoxContainer.add_child(button)
+		
+		
+func kick_player(id: String, message: String):
+	print("kick ", id, " because ", message)
+	for i in range(len(players)):
+		if players[i].id == id:
+			players.pop_at(i)
+			break
+	update_user_list()
+	client.emit("kick-player", { "id": id, "reason":  message}, "/game")
+	
 
 
 
