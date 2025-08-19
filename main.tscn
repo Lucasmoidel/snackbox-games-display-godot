@@ -62,10 +62,11 @@ anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -83.0
+offset_top = -104.0
+offset_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 0
-theme_override_font_sizes/font_size = 60
+theme_override_font_sizes/font_size = 70
 text = "connecting ."
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -77,10 +78,11 @@ anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -91.0
+offset_top = -104.0
+offset_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 0
-theme_override_font_sizes/font_size = 60
+theme_override_font_sizes/font_size = 70
 text = "Retry Connection"
 
 [node name="Button" type="Button" parent="."]
@@ -90,10 +92,11 @@ anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -91.0
+offset_top = -104.0
+offset_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 0
-theme_override_font_sizes/font_size = 60
+theme_override_font_sizes/font_size = 70
 text = "create room"
 
 [node name="Label" type="Label" parent="."]
@@ -131,5 +134,20 @@ grow_horizontal = 2
 grow_vertical = 2
 alignment = 1
 
+[node name="Button3" type="Button" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -278.0
+offset_bottom = -155.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_font_sizes/font_size = 80
+text = "Start Game"
+
 [connection signal="button_down" from="Button2" to="." method="_on_reconnect_pressed"]
 [connection signal="button_down" from="Button" to="." method="_on_create_session_down"]
+[connection signal="button_down" from="Button3" to="." method="_start_game_down"]

@@ -108,3 +108,7 @@ class Player:
 
 func _on_reconnect_pressed() -> void:
 	client.connect_socket({"auth":"hamburgerandfries"})
+
+
+func _start_game_down() -> void:
+	pass # Replace with function body.
