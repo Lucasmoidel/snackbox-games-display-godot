@@ -14,10 +14,17 @@ func _ready() -> void:
 	$AnimationPlayer.play("connecting")
 
 func _process(delta: float):
-	if Time.get_ticks_msec() > 5000 and !client_connected:
-		$Label2.hide()
-		$Button.hide()
-		$Button2.show()
+	if !client_connected and Time.get_ticks_msec() > int(Time.get_ticks_msec()) % 2500:
+		if retried:
+			$Label2.hide()
+			$Button.hide()
+			$Button2.show()
+		if not retried:
+			retried = true
+			print('hfiehifihfwihfih')
+			client.base_url = 'http://localhost:4009'
+			client.connect_socket({"auth":"hamburgerandfries"})
+			
 func _on_socket_connected(ns: String) -> void:
 	print("Connected to namespace: %s" % ns)
 	client_connected = true
@@ -54,8 +61,7 @@ func _on_event_received(event: String, data: Variant, ns: String) -> void:
 				print(i.name, "disconnected")
 		update_user_list()
 
-
-		
+var retried: bool = false
 
 func _on_namespace_connection_error(ns: String, data: Variant) -> void:
 	print("Connection error for %s: %s" % [ns, data])
