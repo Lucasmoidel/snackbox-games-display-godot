@@ -1,0 +1,31 @@
+[gd_scene load_steps=2 format=3 uid="uid://dju54up85ykwc"]
+
+[ext_resource type="Script" uid="uid://btey2teids4y1" path="res://scenes/prompt_machine.gd" id="1_r816m"]
+
+[node name="PromptMachine" type="Control" node_paths=PackedStringArray("id_display")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_r816m")
+id_display = NodePath("IdLabel")
+
+[node name="PromptInput" type="LineEdit" parent="."]
+layout_mode = 0
+offset_left = 75.0
+offset_top = 191.0
+offset_right = 1083.0
+offset_bottom = 256.0
+theme_override_font_sizes/font_size = 34
+placeholder_text = "Prompt"
+
+[node name="IdLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 75.0
+offset_top = 271.0
+offset_right = 289.0
+offset_bottom = 336.0
+
+[connection signal="text_changed" from="PromptInput" to="." method="_on_prompt_input_text_changed"]
