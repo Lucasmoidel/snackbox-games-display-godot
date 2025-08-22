@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://btey2teids4y1" path="res://scenes/prompt_machine.gd" id="1_r816m"]
 
-[node name="PromptMachine" type="Control" node_paths=PackedStringArray("id_display", "prompt_input")]
+[node name="PromptMachine" type="Control" node_paths=PackedStringArray("id_display", "prompt_input", "audio_select_window", "file_loaded_label")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -12,6 +12,8 @@ grow_vertical = 2
 script = ExtResource("1_r816m")
 id_display = NodePath("IdLabel")
 prompt_input = NodePath("PromptInput")
+audio_select_window = NodePath("AudioSelectWindow")
+file_loaded_label = NodePath("HBoxContainer/FileLoaded")
 
 [node name="PromptInput" type="LineEdit" parent="."]
 layout_mode = 0
@@ -22,23 +24,50 @@ offset_bottom = 144.0
 theme_override_font_sizes/font_size = 34
 placeholder_text = "Prompt"
 
-[node name="AudioSelectButton" type="MenuButton" parent="."]
-layout_mode = 0
-offset_left = 253.0
-offset_top = 156.0
-offset_right = 423.0
-offset_bottom = 204.0
-text = "Select Audio"
-
 [node name="IdLabel" type="Label" parent="."]
-layout_mode = 0
-offset_left = 75.0
-offset_top = 151.0
-offset_right = 289.0
-offset_bottom = 216.0
+layout_mode = 2
+offset_left = 876.0
+offset_top = 170.0
+offset_right = 893.0
+offset_bottom = 193.0
 text = "ID"
 
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+offset_left = 75.0
+offset_top = 160.0
+offset_right = 808.0
+offset_bottom = 200.0
+
+[node name="OpenAudioSelectButton" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+text = "Select Audio"
+
+[node name="RemoveButton" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+text = "Remove Audio File"
+
+[node name="FileLoaded" type="Label" parent="HBoxContainer"]
+layout_mode = 2
+text = "No File Loaded"
+
 [node name="AudioSelectWindow" type="FileDialog" parent="."]
-filters = PackedStringArray("*.ogg")
+title = "Open a File"
+ok_button_text = "Open"
+file_mode = 0
+access = 2
+root_subfolder = "audio"
+filters = PackedStringArray("*.ogg", "*.mp3")
+
+[node name="Button" type="Button" parent="."]
+layout_mode = 0
+offset_left = 74.0
+offset_top = 213.0
+offset_right = 1079.0
+offset_bottom = 246.0
+text = "Save Prompt"
 
 [connection signal="text_changed" from="PromptInput" to="." method="_on_prompt_input_text_changed"]
+[connection signal="button_down" from="HBoxContainer/OpenAudioSelectButton" to="." method="_on_open_audio_select_button_button_down"]
+[connection signal="button_down" from="HBoxContainer/RemoveButton" to="." method="_on_remove_button_button_down"]
+[connection signal="file_selected" from="AudioSelectWindow" to="." method="_on_audio_select_window_file_selected"]
+[connection signal="button_down" from="Button" to="." method="_on_button_button_down"]
