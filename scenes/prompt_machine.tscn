@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://btey2teids4y1" path="res://scenes/prompt_machine.gd" id="1_r816m"]
 
-[node name="PromptMachine" type="Control" node_paths=PackedStringArray("id_display")]
+[node name="PromptMachine" type="Control" node_paths=PackedStringArray("id_display", "prompt_input")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -11,6 +11,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_r816m")
 id_display = NodePath("IdLabel")
+prompt_input = NodePath("PromptInput")
 
 [node name="PromptInput" type="LineEdit" parent="."]
 layout_mode = 0
