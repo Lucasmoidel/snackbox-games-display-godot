@@ -1,0 +1,31 @@
+[gd_scene load_steps=2 format=3 uid="uid://cqvscm34ilxx2"]
+
+[ext_resource type="Script" uid="uid://bkab8i4tj23ox" path="res://scripts/prompt_item.gd" id="1_hwq00"]
+
+[node name="PromptItem" type="Control"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 3
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 39.0
+grow_horizontal = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+script = ExtResource("1_hwq00")
+
+[node name="Background" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PromptText" type="Label" parent="Background"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 2.0
+offset_right = 739.0
+offset_bottom = 36.0
+text = "Prompt text goes here"
+vertical_alignment = 1

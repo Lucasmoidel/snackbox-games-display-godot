@@ -1,8 +1,8 @@
 [gd_scene load_steps=2 format=3 uid="uid://dju54up85ykwc"]
 
-[ext_resource type="Script" uid="uid://btey2teids4y1" path="res://scenes/prompt_machine.gd" id="1_r816m"]
+[ext_resource type="Script" uid="uid://btey2teids4y1" path="res://scripts/prompt_machine.gd" id="1_r816m"]
 
-[node name="PromptMachine" type="Control" node_paths=PackedStringArray("id_display", "prompt_input", "audio_select_window", "file_loaded_label")]
+[node name="PromptMachine" type="Control" node_paths=PackedStringArray("id_display", "prompt_input", "audio_select_window", "file_loaded_label", "prompt_list")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -14,6 +14,7 @@ id_display = NodePath("IdLabel")
 prompt_input = NodePath("PromptInput")
 audio_select_window = NodePath("AudioSelectWindow")
 file_loaded_label = NodePath("HBoxContainer/FileLoaded")
+prompt_list = NodePath("PromptList")
 
 [node name="PromptInput" type="LineEdit" parent="."]
 layout_mode = 0
@@ -33,6 +34,7 @@ offset_bottom = 193.0
 text = "ID"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 0
 offset_left = 75.0
 offset_top = 160.0
 offset_right = 808.0
@@ -65,6 +67,21 @@ offset_top = 213.0
 offset_right = 1079.0
 offset_bottom = 246.0
 text = "Save Prompt"
+
+[node name="PromptsListLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 83.0
+offset_top = 261.0
+offset_right = 491.0
+offset_bottom = 284.0
+text = "Prompts"
+
+[node name="PromptList" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 75.0
+offset_top = 296.0
+offset_right = 1078.0
+offset_bottom = 616.0
 
 [connection signal="text_changed" from="PromptInput" to="." method="_on_prompt_input_text_changed"]
 [connection signal="button_down" from="HBoxContainer/OpenAudioSelectButton" to="." method="_on_open_audio_select_button_button_down"]

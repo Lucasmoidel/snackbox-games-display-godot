@@ -6,17 +6,23 @@ extends Control
 @export var audio_select_window: FileDialog
 @export var file_loaded_label: Label
 
+@export var prompt_list: VBoxContainer
+
 var current_prompt_time: int
 
 var current_audio_file_loaded: String
 
 var dir: DirAccess
+var prompt_item: PackedScene
 
 func _ready() -> void:
+	prompt_item = load("res://scenes/prompt_item.tscn")
 	current_prompt_time = int(Time.get_unix_time_from_system())
 	set_id_display(create_id(prompt_input.text))
 	
 	dir = DirAccess.open('res://prompts')
+	
+	refresh_prompts()
 
 func _process(delta: float) -> void:
 	if current_audio_file_loaded != "":
@@ -88,3 +94,30 @@ func _on_remove_button_button_down() -> void:
 
 func _on_button_button_down() -> void:
 	save_prompt()
+	refresh_prompts()
+	
+func refresh_prompts():
+	for child in prompt_list.get_children():
+		child.queue_free()
+	
+	var files: Array[Prompt]
+	var paths := dir.get_files()
+	
+	print(paths)
+	
+	for file in paths:
+		
+		var resource:= load('res://prompts/'+file)
+		
+		if resource is Prompt:
+		
+			var prompt_data: Prompt = resource
+			var item: PromptItem = prompt_item.instantiate()
+			var has_audio = prompt_data.prompt_audio != null
+			item.setup(prompt_data.id, prompt_data.prompt_text, has_audio, file)
+			prompt_list.add_child(item)
+			
+			
+		
+		
+	print(files)
