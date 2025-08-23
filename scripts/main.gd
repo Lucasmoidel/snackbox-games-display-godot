@@ -4,6 +4,10 @@ extends Control
 @export var create_game_button: Button
 @export var room_code_label: Label
 
+@export var player_list: HBoxContainer
+
+@export var lobby: Control
+@export var writing: Control
 var players: Array[Player] = []
 var client_connected: bool = false
 
@@ -12,6 +16,7 @@ var dir: DirAccess
 enum GameState {
 	INACTIVE,
 	LOBBY,
+	INSTRUCTION,
 	WRITING,
 	VOTING,
 	LEADERBOARD,
@@ -24,6 +29,9 @@ var waiting_for = []
 
 var voting_round: int = 0
 
+var prompt_one_votes: int = 0
+var prompt_two_votes: int = 0
+
 func _ready() -> void:
 	dir = DirAccess.open('res://prompts')
 	get_tree().set_auto_accept_quit(false)
@@ -33,27 +41,11 @@ func _ready() -> void:
 	client.namespace_connection_error.connect(_on_namespace_connection_error)
 	# Connect to /game with auth data
 	client.connect_socket({"auth":"hamburgerandfries"})
-	$AnimationPlayer.play("connecting")
 
-func _process(delta: float):
-	if !client_connected and Time.get_ticks_msec() > int(Time.get_ticks_msec()) % 2500:
-		if retried:
-			$Label2.hide()
-			$Button.hide()
-			$Button2.show()
-		if not retried:
-			retried = true
-			print('hfiehifihfwihfih')
-			client.base_url = 'http://localhost:4009'
-			client.connect_socket({"auth":"hamburgerandfries"})
-			
 func _on_socket_connected(ns: String) -> void:
 	print("Connected to namespace: %s" % ns)
 	client_connected = true
-	$AnimationPlayer.stop()
-	$Label2.hide()
-	$Button.show()
-	$Button2.hide()
+	create_game_button.show()
 
 func handle_player_connect(data):
 	var id = data["id"]
@@ -106,6 +98,7 @@ func room_started(data):
 	
 	room_code_label.set_text(roomcode)
 	room_code_label.show()
+	player_list.show()
 	
 	create_game_button.hide()
 	
@@ -133,9 +126,6 @@ func player_finished(id):
 
 func _on_namespace_connection_error(ns: String, data: Variant) -> void:
 	print("Connection error for %s: %s" % [ns, data])
-	$Label2.set_text("Connection error for %s: %s" % [ns, data])
-	$Button.hide()
-	$Label2.show()
 
 func _notification(what):
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:
@@ -143,14 +133,14 @@ func _notification(what):
 		get_tree().quit() # default behavior
 
 func update_user_list():
-	for i in $HBoxContainer.get_children():
+	for i in player_list.get_children():
 		i.queue_free()
 	for i in players:
 		var button = Button.new()
 		button.set_text(i.name)
 		button.theme = load("res://button_theme.tres")
 		button.pressed.connect(kick_player.bind(i.id, "idk ;]"))
-		$HBoxContainer.add_child(button)
+		player_list.add_child(button)
 		
 		
 func kick_player(id: String, message: String):
@@ -246,13 +236,6 @@ func send_vote():
 
 func start_voting():
 	var prompts_to_vote_on = send_vote()
-	
-	
-
-func _start_game_down() -> void:
-	if gameState == GameState.LOBBY:
-		gameState = GameState.WRITING
-		pick_random_prompts()
 
 
 func _on_timer_timeout():
@@ -260,3 +243,10 @@ func _on_timer_timeout():
 	print("Time up!")
 	client.emit('times-up', {}, "/game")
 	start_voting()
+
+
+func _on_start_game_button_pressed():
+	if gameState == GameState.LOBBY:
+		lobby.hide()
+		writing.show()
+		gameState = GameState.INSTRUCTION

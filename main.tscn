@@ -1,47 +1,10 @@
-[gd_scene load_steps=6 format=3 uid="uid://d1m1q24bbaec5"]
+[gd_scene load_steps=4 format=3 uid="uid://d1m1q24bbaec5"]
 
 [ext_resource type="Script" uid="uid://cnndsw4a2byu4" path="res://scripts/main.gd" id="1_ig7tw"]
 [ext_resource type="Script" uid="uid://bgeqgbrxhjvmj" path="res://addons/godot-socketio/socketio.gd" id="2_0xm2m"]
+[ext_resource type="Script" uid="uid://7m01lts4joo2" path="res://name_points.gd" id="3_h2yge"]
 
-[sub_resource type="Animation" id="Animation_h2yge"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Label2:text")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": ["connecting ."]
-}
-
-[sub_resource type="Animation" id="Animation_0xm2m"]
-resource_name = "connecting"
-length = 1.5
-loop_mode = 1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Label2:text")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.5, 1),
-"transitions": PackedFloat32Array(1, 1, 1),
-"update": 1,
-"values": ["connecting .", "connecting ..", "connecting ..."]
-}
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_1bvp3"]
-_data = {
-&"RESET": SubResource("Animation_h2yge"),
-&"connecting": SubResource("Animation_0xm2m")
-}
-
-[node name="main" type="Control" node_paths=PackedStringArray("create_game_button", "room_code_label")]
+[node name="main" type="Control" node_paths=PackedStringArray("create_game_button", "room_code_label", "player_list", "lobby", "writing")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -51,6 +14,9 @@ grow_vertical = 2
 script = ExtResource("1_ig7tw")
 create_game_button = NodePath("Lobby/CreateGameButton")
 room_code_label = NodePath("Lobby/RoomCode")
+player_list = NodePath("")
+lobby = NodePath("Lobby")
+writing = NodePath("Writing")
 
 [node name="SocketIO" type="Node" parent="."]
 script = ExtResource("2_0xm2m")
@@ -83,6 +49,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="CreateGameButton" type="Button" parent="Lobby"]
+visible = false
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -99,6 +66,7 @@ theme_override_font_sizes/font_size = 40
 text = "Create Room"
 
 [node name="RoomCode" type="Label" parent="Lobby"]
+visible = false
 layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5
@@ -113,33 +81,83 @@ text = "code"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="PlayerList" type="HBoxContainer" parent="Lobby"]
-visible = false
+[node name="StartGameButton" type="Button" parent="Lobby"]
 layout_mode = 1
-anchors_preset = 14
+anchors_preset = 8
+anchor_left = 0.5
 anchor_top = 0.5
-anchor_right = 1.0
+anchor_right = 0.5
 anchor_bottom = 0.5
-offset_top = -34.0
-offset_bottom = 38.0
+offset_left = -575.0
+offset_top = 211.0
+offset_right = -185.0
+offset_bottom = 316.0
 grow_horizontal = 2
 grow_vertical = 2
-alignment = 1
+theme_override_font_sizes/font_size = 40
+text = "Start Game"
 
-[node name="Label2" type="Label" parent="."]
+[node name="NamePoints" type="Control" parent="Lobby" node_paths=PackedStringArray("player_points")]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -360.0
+offset_top = -113.0
+offset_right = 360.0
+offset_bottom = 113.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("3_h2yge")
+player_points = [NodePath("NamePoint"), NodePath("NamePoint2"), NodePath("NamePoint3"), NodePath("NamePoint4"), NodePath("NamePoint5"), NodePath("NamePoint6"), NodePath("NamePoint7"), NodePath("NamePoint8")]
+
+[node name="NamePoint" type="Node2D" parent="Lobby/NamePoints"]
+position = Vector2(27, 135)
+
+[node name="NamePoint2" type="Node2D" parent="Lobby/NamePoints"]
+position = Vector2(141, 58)
+
+[node name="NamePoint3" type="Node2D" parent="Lobby/NamePoints"]
+position = Vector2(197, 168)
+
+[node name="NamePoint4" type="Node2D" parent="Lobby/NamePoints"]
+position = Vector2(301, 58)
+
+[node name="NamePoint5" type="Node2D" parent="Lobby/NamePoints"]
+position = Vector2(403, 171)
+
+[node name="NamePoint6" type="Node2D" parent="Lobby/NamePoints"]
+position = Vector2(514, 71)
+
+[node name="NamePoint7" type="Node2D" parent="Lobby/NamePoints"]
+position = Vector2(601, 171)
+
+[node name="NamePoint8" type="Node2D" parent="Lobby/NamePoints"]
+position = Vector2(695, 93)
+
+[node name="Writing" type="Control" parent="."]
 visible = false
 layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -104.0
-offset_right = 369.0
-offset_bottom = 1.0
 grow_horizontal = 2
-grow_vertical = 0
-theme_override_font_sizes/font_size = 70
-text = "connecting ."
+grow_vertical = 2
+
+[node name="Title" type="Label" parent="Writing"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -469.5
+offset_top = 48.0
+offset_right = 469.5
+offset_bottom = 195.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 71
+text = "Write your Responses Now!"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -157,21 +175,6 @@ grow_horizontal = 2
 grow_vertical = 0
 theme_override_font_sizes/font_size = 70
 text = "Retry Connection"
-
-[node name="Button" type="Button" parent="."]
-visible = false
-layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = -104.0
-offset_right = 2.0
-offset_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 0
-theme_override_font_sizes/font_size = 70
-text = "create room"
 
 [node name="Label" type="Label" parent="."]
 visible = false
@@ -191,11 +194,6 @@ theme_override_font_sizes/font_size = 80
 text = "Snackbox Games"
 horizontal_alignment = 1
 vertical_alignment = 1
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_1bvp3")
-}
 
 [node name="Button3" type="Button" parent="."]
 visible = false
@@ -218,7 +216,7 @@ wait_time = 120.0
 one_shot = true
 
 [connection signal="pressed" from="Lobby/CreateGameButton" to="." method="_on_create_game_button_pressed"]
+[connection signal="pressed" from="Lobby/StartGameButton" to="." method="_on_start_game_button_pressed"]
 [connection signal="button_down" from="Button2" to="." method="_on_reconnect_pressed"]
-[connection signal="button_down" from="Button" to="." method="_on_create_session_down"]
 [connection signal="button_down" from="Button3" to="." method="_start_game_down"]
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
