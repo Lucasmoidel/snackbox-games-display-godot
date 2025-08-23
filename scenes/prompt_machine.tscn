@@ -113,9 +113,17 @@ size_flags_horizontal = 3
 [node name="PromptItem" parent="ScrollContainer/PromptList" instance=ExtResource("2_f14yt")]
 layout_mode = 2
 
+[node name="ConfirmDelete" type="ConfirmationDialog" parent="."]
+auto_translate_mode = 1
+title = "Confirm the deletion..."
+size = Vector2i(405, 100)
+ok_button_text = "Confirm"
+dialog_text = "Are you sure you would like to delete this prompt?"
+
 [connection signal="text_changed" from="PromptInput" to="." method="_on_prompt_input_text_changed"]
 [connection signal="button_down" from="HBoxContainer/OpenAudioSelectButton" to="." method="_on_open_audio_select_button_button_down"]
 [connection signal="button_down" from="HBoxContainer/RemoveButton" to="." method="_on_remove_button_button_down"]
 [connection signal="file_selected" from="AudioSelectWindow" to="." method="_on_audio_select_window_file_selected"]
 [connection signal="button_down" from="SaveButtons/Button" to="." method="_on_button_button_down"]
 [connection signal="button_down" from="SaveButtons/ClearButton" to="." method="_on_clear_button_button_down"]
+[connection signal="confirmed" from="ConfirmDelete" to="." method="_on_confirm_delete_confirmed"]

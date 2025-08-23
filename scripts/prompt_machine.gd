@@ -58,8 +58,10 @@ func save_prompt():
 	
 	prompt_resource.id = id
 	
+	var split_audio = current_audio_file_loaded.split("/")
+	
 	if current_audio_file_loaded != "":
-		prompt_resource.prompt_audio = current_audio_file_loaded
+		prompt_resource.prompt_audio = 'res://audio/'+split_audio[-1]
 	
 	prompt_resource.prompt_text = entered_prompt
 	
@@ -141,6 +143,8 @@ func refresh_prompts():
 	
 	print(paths)
 	
+	$PromptsListLabel.set_text("Prompts ("+str(len(paths))+")")
+	
 	for file in paths:
 		
 		var resource:= load('res://prompts/'+file)
@@ -167,12 +171,13 @@ func refresh_prompts():
 func _on_edit_button_pressed(filepath:String):
 	print(filepath)
 	load_existing_prompt(filepath)
-	
-func _on_delete_button_pressed(filepath:String):
-	print(filepath)
-	delete_file(filepath)
-	refresh_prompts()
 
+var deleting: String
+
+func _on_delete_button_pressed(filepath:String):
+	$ConfirmDelete.popup_centered(Vector2i(200,100))
+	deleting = filepath
+	
 
 func _on_clear_button_button_down():
 	if editing_file:
@@ -181,3 +186,9 @@ func _on_clear_button_button_down():
 		clear_fields()
 	else:
 		clear_fields()
+
+
+func _on_confirm_delete_confirmed() -> void:
+	print(deleting)
+	delete_file(deleting)
+	refresh_prompts()

@@ -1,6 +1,8 @@
 class_name PromptItem
 extends Panel
 
+signal delete_confirmed
+
 var id: String
 var prompt_text: String
 var has_audio_file: bool
