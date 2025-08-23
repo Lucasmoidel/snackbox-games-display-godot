@@ -1,0 +1,121 @@
+[gd_scene load_steps=3 format=3 uid="uid://dju54up85ykwc"]
+
+[ext_resource type="Script" uid="uid://btey2teids4y1" path="res://scripts/prompt_machine.gd" id="1_r816m"]
+[ext_resource type="PackedScene" uid="uid://cqvscm34ilxx2" path="res://scenes/prompt_item.tscn" id="2_f14yt"]
+
+[node name="PromptMachine" type="Control" node_paths=PackedStringArray("id_display", "prompt_input", "audio_select_window", "file_loaded_label", "prompt_list")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_r816m")
+id_display = NodePath("IdLabel")
+prompt_input = NodePath("PromptInput")
+audio_select_window = NodePath("AudioSelectWindow")
+file_loaded_label = NodePath("HBoxContainer/FileLoaded")
+prompt_list = NodePath("ScrollContainer/PromptList")
+
+[node name="PromptInput" type="LineEdit" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.0651042
+anchor_top = 0.121914
+anchor_right = 0.940104
+anchor_bottom = 0.222222
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 34
+placeholder_text = "Prompt"
+max_length = 120
+metadata/_edit_use_anchors_ = true
+
+[node name="IdLabel" type="Label" parent="."]
+layout_mode = 2
+anchor_left = 0.760417
+anchor_top = 0.262346
+anchor_right = 0.775174
+anchor_bottom = 0.297839
+offset_bottom = 1.52588e-05
+text = "ID"
+metadata/_edit_use_anchors_ = true
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 0
+anchor_left = 0.0651042
+anchor_top = 0.246914
+anchor_right = 0.701389
+anchor_bottom = 0.308642
+metadata/_edit_use_anchors_ = true
+
+[node name="OpenAudioSelectButton" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+text = "Select Audio"
+
+[node name="RemoveButton" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+text = "Remove Audio File"
+
+[node name="FileLoaded" type="Label" parent="HBoxContainer"]
+layout_mode = 2
+text = "No File Loaded"
+
+[node name="AudioSelectWindow" type="FileDialog" parent="."]
+title = "Open a File"
+ok_button_text = "Open"
+file_mode = 0
+access = 2
+root_subfolder = "audio"
+filters = PackedStringArray("*.ogg", "*.mp3")
+
+[node name="SaveButtons" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 74.0
+offset_top = 213.0
+offset_right = 1077.0
+offset_bottom = 253.0
+
+[node name="Button" type="Button" parent="SaveButtons"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Save Prompt"
+metadata/_edit_use_anchors_ = true
+
+[node name="ClearButton" type="Button" parent="SaveButtons"]
+layout_mode = 2
+text = "Clear Entry"
+
+[node name="PromptsListLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.0694444
+anchor_top = 0.395062
+anchor_right = 0.423611
+anchor_bottom = 0.450617
+theme_override_font_sizes/font_size = 26
+text = "Prompts"
+metadata/_edit_use_anchors_ = true
+
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+layout_mode = 2
+anchor_left = 0.0651042
+anchor_top = 0.45679
+anchor_right = 0.935764
+anchor_bottom = 0.908951
+horizontal_scroll_mode = 0
+metadata/_edit_use_anchors_ = true
+
+[node name="PromptList" type="VBoxContainer" parent="ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PromptItem" parent="ScrollContainer/PromptList" instance=ExtResource("2_f14yt")]
+layout_mode = 2
+
+[connection signal="text_changed" from="PromptInput" to="." method="_on_prompt_input_text_changed"]
+[connection signal="button_down" from="HBoxContainer/OpenAudioSelectButton" to="." method="_on_open_audio_select_button_button_down"]
+[connection signal="button_down" from="HBoxContainer/RemoveButton" to="." method="_on_remove_button_button_down"]
+[connection signal="file_selected" from="AudioSelectWindow" to="." method="_on_audio_select_window_file_selected"]
+[connection signal="button_down" from="SaveButtons/Button" to="." method="_on_button_button_down"]
+[connection signal="button_down" from="SaveButtons/ClearButton" to="." method="_on_clear_button_button_down"]

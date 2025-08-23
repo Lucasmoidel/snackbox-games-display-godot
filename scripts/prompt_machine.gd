@@ -67,6 +67,7 @@ func save_prompt():
 	var result = ResourceSaver.save(prompt_resource,path)
 	
 	clear_fields()
+	refresh_prompts()
 
 func set_id_display(id):
 	var id_msg = "ID: "+id
@@ -113,7 +114,6 @@ func _on_button_button_down() -> void:
 	if editing_file:
 		update_prompt()
 	save_prompt()
-	refresh_prompts()
 
 func update_prompt():
 	delete_file("res://prompts/"+file_being_edited)
@@ -135,7 +135,7 @@ func refresh_prompts():
 	for child in prompt_list.get_children():
 		child.queue_free()
 	
-	var files: Array[Prompt]
+	#var files: Array[Prompt]
 	var paths := dir.get_files()
 	
 	print(paths)
@@ -161,7 +161,7 @@ func refresh_prompts():
 			
 		
 		
-	print(files)
+	#print(files)
 	
 func _on_edit_button_pressed(filepath:String):
 	print(filepath)

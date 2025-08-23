@@ -3,7 +3,11 @@ extends Control
 
 var players: Array[Player] = []
 var client_connected: bool = false
+
+var dir: DirAccess
+
 func _ready() -> void:
+	dir = DirAccess.open('res://prompts')
 	get_tree().set_auto_accept_quit(false)
 	
 	client.socket_connected.connect(_on_socket_connected)
@@ -111,10 +115,39 @@ class Player:
 		self.name = character_name
 		self.id = character_id
 
-
 func _on_reconnect_pressed() -> void:
 	client.connect_socket({"auth":"hamburgerandfries"})
 
+# [{"prompt":"A disgusting name for a dog.", "id":1},{"prompt":"What you don't want to find in your bedroom closet.", "id":2}]
+
+func get_active_players():
+	var active_players: Array[Player]
+	for each:Player in players:
+		if each.connected:
+			active_players.append(each)
+	return active_players
+
+func pick_random_prompts():
+	var options = dir.get_files()
+	
+	print(options)
+	
+	var final_data = []
+	
+	for x in get_active_players():
+		var prompt_num: int = randi_range(0, options.size() - 1)
+		var picked_prompt : Prompt = load("res://prompts/"+options[prompt_num])
+		options.remove_at(prompt_num)
+		
+		final_data.append({"prompt":picked_prompt.prompt_text, "id":picked_prompt.id})
+	
+	var active_player_ids: Array
+	
+	for x:Player in get_active_players():
+		active_player_ids.append(x.id)
+	
+	client.emit('send-prompts', {"prompts":final_data,"players":active_player_ids}, '/game')
+		
 
 func _start_game_down() -> void:
-	pass # Replace with function body.
+	pick_random_prompts()

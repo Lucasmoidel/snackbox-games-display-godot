@@ -135,15 +135,14 @@ grow_vertical = 2
 alignment = 1
 
 [node name="Button3" type="Button" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 1.0
-offset_top = -534.0
-offset_right = -707.0
-offset_bottom = -411.0
+offset_top = -278.0
+offset_bottom = -155.0
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_font_sizes/font_size = 80
