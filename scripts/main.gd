@@ -1,6 +1,9 @@
 extends Control
 @onready var client: SocketIO = $SocketIO
 
+@export var create_game_button: Button
+@export var room_code_label: Label
+
 var players: Array[Player] = []
 var client_connected: bool = false
 
@@ -52,34 +55,41 @@ func _on_socket_connected(ns: String) -> void:
 	$Button.show()
 	$Button2.hide()
 
+func handle_player_connect(data):
+	var id = data["id"]
+	var username = data["username"]
+	
+	var player_exists: bool = false
+	
+	for i in players:
+		if i.id == id:
+			i.name = username
+			i.connected = true
+			player_exists = true
+			break
+	if !player_exists:
+		players.append(Player.new(username, id))
+	update_user_list()
+
+func handle_player_disconnect(data):
+	var id = data["id"]
+	
+	for i in players:
+		if i.id == id:
+			i.connected = false
+			print(i.name, "disconnected")
+	update_user_list()
 
 func _on_event_received(event: String, data: Variant, ns: String) -> void:
 	print("Event %s with %s as data received" % [event, data])
 	print(data)
 	data = data[0]
 	if event == "created-room":
-		$Button.hide()
-		$Label2.set_text(str("room code: ", data["roomcode"]))
-		$Label2.show()
-		$Button2.hide()
-		gameState = GameState.LOBBY
+		room_started(data)
 	if event == "player-joined":
-		var player_exists: bool = false
-		for i in players:
-			if i.id == data["id"]:
-				i.name = data["username"]
-				i.connected = true
-				player_exists = true
-				break
-		if !player_exists:
-			players.append(Player.new(data["username"], data["id"]))
-		update_user_list()
+		handle_player_connect(data)
 	if event == "player-left":
-		for i in players:
-			if i.id == data["id"]:
-				i.connected = false
-				print(i.name, "disconnected")
-		update_user_list()
+		handle_player_disconnect(data)
 	if event == "prompt-response":
 		received_response(data)
 	if event == "player-finished":
@@ -87,6 +97,21 @@ func _on_event_received(event: String, data: Variant, ns: String) -> void:
 	if event == "player-vote":
 		pass
 
+# Start the game
+func _on_create_game_button_pressed():
+	client.emit("create-room", { "gamemode": "wisecrack" }, "/game")
+
+func room_started(data):
+	var roomcode: String = data["roomcode"]
+	
+	room_code_label.set_text(roomcode)
+	room_code_label.show()
+	
+	create_game_button.hide()
+	
+	gameState = GameState.LOBBY
+
+# Receive a response to a prompt
 func received_response(data):
 	var response = data.response
 	var prompt_id = data.prompt_id
@@ -137,11 +162,6 @@ func kick_player(id: String, message: String):
 	update_user_list()
 	client.emit("kick-player", { "id": id, "reason":  message}, "/game")
 	
-
-
-
-func _on_create_session_down() -> void:
-	client.emit("create-room", { "gamemode": "wisecrack" }, "/game")
 
 class Player:
 	var score: int = 0
@@ -225,7 +245,7 @@ func send_vote():
 	client.emit('send-vote', {"responses":responses, "authors":authors, "voters":voters}, "/game")
 
 func start_voting():
-	send_vote()
+	var prompts_to_vote_on = send_vote()
 	
 	
 
