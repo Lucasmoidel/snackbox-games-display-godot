@@ -55,6 +55,7 @@ func save_prompt():
 	print(entered_prompt)
 	
 	var prompt_resource: Prompt = Prompt.new()
+	
 	prompt_resource.id = id
 	
 	if current_audio_file_loaded != "":

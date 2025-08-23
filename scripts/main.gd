@@ -6,6 +6,8 @@ var client_connected: bool = false
 
 var dir: DirAccess
 
+var all_responses = {}
+
 func _ready() -> void:
 	dir = DirAccess.open('res://prompts')
 	get_tree().set_auto_accept_quit(false)
@@ -64,8 +66,20 @@ func _on_event_received(event: String, data: Variant, ns: String) -> void:
 				i.connected = false
 				print(i.name, "disconnected")
 		update_user_list()
+	if event == "prompt-response":
+		received_response(data)
+
+func received_response(data):
+	var response = data.response
+	var prompt_id = data.prompt_id
+	var player_id = data.id
+	
+	all_responses[prompt_id].responses.append({"id":player_id,"text":response})
+	
+	print(all_responses)
 
 var retried: bool = false
+
 
 func _on_namespace_connection_error(ns: String, data: Variant) -> void:
 	print("Connection error for %s: %s" % [ns, data])
@@ -104,7 +118,6 @@ func kick_player(id: String, message: String):
 func _on_create_session_down() -> void:
 	client.emit("create-room", { "gamemode": "wisecrack" }, "/game")
 
-
 class Player:
 	var score: int = 0
 	var name: String = ""
@@ -128,6 +141,7 @@ func get_active_players():
 	return active_players
 
 func pick_random_prompts():
+	#responses = {}
 	var options = dir.get_files()
 	
 	print(options)
@@ -138,7 +152,8 @@ func pick_random_prompts():
 		var prompt_num: int = randi_range(0, options.size() - 1)
 		var picked_prompt : Prompt = load("res://prompts/"+options[prompt_num])
 		options.remove_at(prompt_num)
-		
+		print("PROMPT ID",picked_prompt.id)
+		all_responses[picked_prompt.id] = { "prompt":picked_prompt.prompt_text, "audio":picked_prompt.prompt_audio, "responses":[] }
 		final_data.append({"prompt":picked_prompt.prompt_text, "id":picked_prompt.id})
 	
 	var active_player_ids: Array
@@ -147,6 +162,8 @@ func pick_random_prompts():
 		active_player_ids.append(x.id)
 	
 	client.emit('send-prompts', {"prompts":final_data,"players":active_player_ids}, '/game')
+	
+	print(all_responses)
 		
 
 func _start_game_down() -> void:
