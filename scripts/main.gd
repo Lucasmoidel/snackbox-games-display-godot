@@ -6,7 +6,20 @@ var client_connected: bool = false
 
 var dir: DirAccess
 
+enum GameState {
+	INACTIVE,
+	LOBBY,
+	WRITING,
+	VOTING,
+	LEADERBOARD,
+}
+
+var gameState: GameState = GameState.INACTIVE
+
 var all_responses = {}
+var waiting_for = []
+
+var voting_round: int = 0
 
 func _ready() -> void:
 	dir = DirAccess.open('res://prompts')
@@ -49,6 +62,7 @@ func _on_event_received(event: String, data: Variant, ns: String) -> void:
 		$Label2.set_text(str("room code: ", data["roomcode"]))
 		$Label2.show()
 		$Button2.hide()
+		gameState = GameState.LOBBY
 	if event == "player-joined":
 		var player_exists: bool = false
 		for i in players:
@@ -68,6 +82,10 @@ func _on_event_received(event: String, data: Variant, ns: String) -> void:
 		update_user_list()
 	if event == "prompt-response":
 		received_response(data)
+	if event == "player-finished":
+		player_finished(data.id)
+	if event == "player-vote":
+		pass
 
 func received_response(data):
 	var response = data.response
@@ -80,6 +98,13 @@ func received_response(data):
 
 var retried: bool = false
 
+func player_finished(id):
+	waiting_for.erase(id)
+	
+	if len(waiting_for) == 0:
+		print("ending start voting")
+		start_voting()
+		gameState = GameState.VOTING
 
 func _on_namespace_connection_error(ns: String, data: Variant) -> void:
 	print("Connection error for %s: %s" % [ns, data])
@@ -160,11 +185,58 @@ func pick_random_prompts():
 	
 	for x:Player in get_active_players():
 		active_player_ids.append(x.id)
+		waiting_for.append(x.id)
 	
 	client.emit('send-prompts', {"prompts":final_data,"players":active_player_ids}, '/game')
 	
+	$Timer.start()
+	
 	print(all_responses)
-		
+
+func send_vote():
+	waiting_for = []
+	
+	var keys = all_responses.keys()
+	
+	var data = all_responses[keys[voting_round]]
+	
+	var responses = []
+	
+	var authors = []
+	
+	print("Voting on "+data.prompt)
+	print(data.responses)
+	
+	for each in data.responses:
+		authors.append(each.id)
+		responses.append(each.text)
+	
+	var voters = []
+	
+	for x:Player in get_active_players():
+		if x.id not in authors:
+			voters.append(x.id)
+			waiting_for.append(x.id)
+			
+	#print(responses)
+	#print(authors)
+	#print(voters)
+			
+	client.emit('send-vote', {"responses":responses, "authors":authors, "voters":voters}, "/game")
+
+func start_voting():
+	send_vote()
+	
+	
 
 func _start_game_down() -> void:
-	pick_random_prompts()
+	if gameState == GameState.LOBBY:
+		gameState = GameState.WRITING
+		pick_random_prompts()
+
+
+func _on_timer_timeout():
+	gameState = GameState.VOTING
+	print("Time up!")
+	client.emit('times-up', {}, "/game")
+	start_voting()

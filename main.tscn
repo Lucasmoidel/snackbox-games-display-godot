@@ -149,6 +149,11 @@ grow_vertical = 0
 theme_override_font_sizes/font_size = 80
 text = "Start Game"
 
+[node name="Timer" type="Timer" parent="."]
+wait_time = 120.0
+one_shot = true
+
 [connection signal="button_down" from="Button2" to="." method="_on_reconnect_pressed"]
 [connection signal="button_down" from="Button" to="." method="_on_create_session_down"]
 [connection signal="button_down" from="Button3" to="." method="_start_game_down"]
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
