@@ -1,10 +1,11 @@
-[gd_scene load_steps=4 format=3 uid="uid://d1m1q24bbaec5"]
+[gd_scene load_steps=5 format=3 uid="uid://d1m1q24bbaec5"]
 
 [ext_resource type="Script" uid="uid://cnndsw4a2byu4" path="res://scripts/main.gd" id="1_ig7tw"]
 [ext_resource type="Script" uid="uid://bgeqgbrxhjvmj" path="res://addons/godot-socketio/socketio.gd" id="2_0xm2m"]
+[ext_resource type="Script" uid="uid://ckb3lsj533jb1" path="res://voting.gd" id="3_1bvp3"]
 [ext_resource type="Script" uid="uid://7m01lts4joo2" path="res://name_points.gd" id="3_h2yge"]
 
-[node name="main" type="Control" node_paths=PackedStringArray("lobby", "writing", "create_game_button", "start_game_button", "room_code_label", "lobby_things", "player_list")]
+[node name="main" type="Control" node_paths=PackedStringArray("lobby", "writing", "voting", "create_game_button", "start_game_button", "room_code_label", "lobby_things", "player_list")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -14,6 +15,7 @@ grow_vertical = 2
 script = ExtResource("1_ig7tw")
 lobby = NodePath("Lobby")
 writing = NodePath("Writing")
+voting = NodePath("Voting")
 create_game_button = NodePath("Lobby/CreateGameButton")
 start_game_button = NodePath("Lobby/LobbyThings/StartGameButton")
 room_code_label = NodePath("Lobby/LobbyThings/RoomCode")
@@ -208,6 +210,87 @@ position = Vector2(197, 103)
 
 [node name="NamePoint8" type="Node2D" parent="Writing/NamePoints"]
 position = Vector2(574, 193)
+
+[node name="Voting" type="Control" parent="." node_paths=PackedStringArray("prompt_label", "response_one", "response_two", "response_one_result", "response_two_result")]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("3_1bvp3")
+prompt_label = NodePath("Prompt")
+response_one = NodePath("Response1")
+response_two = NodePath("Response2")
+response_one_result = NodePath("Response1/Percentage")
+response_two_result = NodePath("Response2/Percentage")
+
+[node name="Prompt" type="Label" parent="Voting"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -339.5
+offset_top = 160.0
+offset_right = 339.5
+offset_bottom = 285.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 40
+text = "TEXT SIZE TEXT SIZE TEXT SIZE TEXT SIZE TEXT SIZE"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="Response1" type="Label" parent="Voting"]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 112.0
+offset_top = -30.0
+offset_right = 623.0
+offset_bottom = 95.0
+grow_vertical = 2
+theme_override_font_sizes/font_size = 28
+text = "Response 1 Response 1 Response 1 Response 1 Response 1 Response 1 "
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="Percentage" type="Label" parent="Voting/Response1"]
+layout_mode = 0
+offset_top = -8.0
+offset_right = 109.0
+offset_bottom = 31.0
+
+[node name="Response2" type="Label" parent="Voting"]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -615.0
+offset_top = -30.5
+offset_right = -104.0
+offset_bottom = 94.5
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_font_sizes/font_size = 28
+text = "Response 2 Response 2 Response 2 Response 2 Response 2 Response 2 "
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="Percentage" type="Label" parent="Voting/Response2"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -109.0
+offset_bottom = 39.0
+grow_horizontal = 0
 
 [node name="Button2" type="Button" parent="."]
 visible = false

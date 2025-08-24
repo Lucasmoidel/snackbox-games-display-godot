@@ -4,6 +4,7 @@ extends Control
 @export_subgroup("Scenes")
 @export var lobby: Control
 @export var writing: Control
+@export var voting: Control
 
 @export_subgroup("Lobby")
 @export var create_game_button: Button
@@ -48,6 +49,10 @@ func _ready() -> void:
 	client.namespace_connection_error.connect(_on_namespace_connection_error)
 	# Connect to /game with auth data
 	client.connect_socket({"auth":"hamburgerandfries"})
+	
+	lobby.show()
+	writing.hide()
+	voting.hide()
 
 func _on_socket_connected(ns: String) -> void:
 	print("Connected to namespace: %s" % ns)
@@ -80,8 +85,8 @@ func handle_player_disconnect(data):
 	player_list.remove_player(id)
 
 func _on_event_received(event: String, data: Variant, ns: String) -> void:
-	print("Event %s with %s as data received" % [event, data])
-	print(data)
+	#print("Event %s with %s as data received" % [event, data])
+	#print(data)
 	data = data[0]
 	if event == "created-room":
 		room_started(data)
@@ -94,7 +99,8 @@ func _on_event_received(event: String, data: Variant, ns: String) -> void:
 	if event == "player-finished":
 		player_finished(data.id)
 	if event == "player-vote":
-		pass
+		print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+		player_voted(data)
 
 # Start the game
 func _on_create_game_button_pressed():
@@ -108,6 +114,34 @@ func room_started(data):
 	create_game_button.hide()
 	
 	gameState = GameState.LOBBY
+
+func player_voted(data):
+	var id = data.id
+	var vote = data.vote
+	
+	waiting_for.erase(id)
+	
+	print("player voted", vote)
+	
+	print("WF",waiting_for)
+	print("VOTING ROUND: ",voting_round)
+	
+	if int(vote) == 1:
+		prompt_one_votes += 1
+	else:
+		prompt_two_votes += 1
+	
+	if len(waiting_for) == 0:
+		
+		voting.show_results(prompt_one_votes,prompt_two_votes)
+		client.emit('times-up')
+		await get_tree().create_timer(5.0).timeout
+		voting_round+=1
+		print("VOTING ROUND: ",voting_round)
+		print("SIZE",all_responses.size())
+		if voting_round > all_responses.size()-1:
+			return
+		send_vote()
 
 # Receive a response to a prompt
 func received_response(data):
@@ -130,6 +164,7 @@ func player_finished(id):
 	
 	if len(waiting_for) == 0:
 		print("ending start voting")
+		await get_tree().create_timer(2.0).timeout
 		start_voting()
 		gameState = GameState.VOTING
 
@@ -202,6 +237,8 @@ func pick_random_prompts():
 	print(all_responses)
 
 func send_vote():
+	prompt_one_votes = 0
+	prompt_two_votes = 0
 	waiting_for = []
 	
 	var keys = all_responses.keys()
@@ -225,7 +262,10 @@ func send_vote():
 		if x.id not in authors:
 			voters.append(x.id)
 			waiting_for.append(x.id)
-			
+	
+	print("RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR", waiting_for, "\nRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR")
+	
+	voting.set_values(data.prompt, responses)
 	#print(responses)
 	#print(authors)
 	#print(voters)
@@ -234,14 +274,18 @@ func send_vote():
 
 func start_voting():
 	player_list.clear_all()
+	writing.hide()
+	voting_round = 0
+	voting.show()
 	var prompts_to_vote_on = send_vote()
 
 
 func _on_timer_timeout():
-	gameState = GameState.VOTING
-	print("Time up!")
-	client.emit('times-up', {}, "/game")
-	start_voting()
+	if gameState == GameState.WRITING:
+		gameState = GameState.VOTING
+		print("Time up!")
+		client.emit('times-up', {}, "/game")
+		start_voting()
 
 
 func _on_start_game_button_pressed():
