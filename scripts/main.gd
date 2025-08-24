@@ -1,13 +1,19 @@
 extends Control
 @onready var client: SocketIO = $SocketIO
 
-@export var create_game_button: Button
-@export var room_code_label: Label
-
-@export var player_list: HBoxContainer
-
+@export_subgroup("Scenes")
 @export var lobby: Control
 @export var writing: Control
+
+@export_subgroup("Lobby")
+@export var create_game_button: Button
+@export var start_game_button: Button
+@export var room_code_label: Label
+
+@export var lobby_things: Control
+
+@export var player_list: Control
+
 var players: Array[Player] = []
 var client_connected: bool = false
 
@@ -61,7 +67,7 @@ func handle_player_connect(data):
 			break
 	if !player_exists:
 		players.append(Player.new(username, id))
-	update_user_list()
+	player_list.add_player(username,id)
 
 func handle_player_disconnect(data):
 	var id = data["id"]
@@ -70,7 +76,7 @@ func handle_player_disconnect(data):
 		if i.id == id:
 			i.connected = false
 			print(i.name, "disconnected")
-	update_user_list()
+	player_list.remove_player(id)
 
 func _on_event_received(event: String, data: Variant, ns: String) -> void:
 	print("Event %s with %s as data received" % [event, data])
@@ -97,9 +103,7 @@ func room_started(data):
 	var roomcode: String = data["roomcode"]
 	
 	room_code_label.set_text(roomcode)
-	room_code_label.show()
-	player_list.show()
-	
+	lobby_things.show()
 	create_game_button.hide()
 	
 	gameState = GameState.LOBBY
@@ -131,16 +135,6 @@ func _notification(what):
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:
 		await client.disconnect_socket()
 		get_tree().quit() # default behavior
-
-func update_user_list():
-	for i in player_list.get_children():
-		i.queue_free()
-	for i in players:
-		var button = Button.new()
-		button.set_text(i.name)
-		button.theme = load("res://button_theme.tres")
-		button.pressed.connect(kick_player.bind(i.id, "idk ;]"))
-		player_list.add_child(button)
 		
 		
 func kick_player(id: String, message: String):
@@ -149,7 +143,6 @@ func kick_player(id: String, message: String):
 		if players[i].id == id:
 			players.pop_at(i)
 			break
-	update_user_list()
 	client.emit("kick-player", { "id": id, "reason":  message}, "/game")
 	
 
