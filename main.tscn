@@ -18,7 +18,7 @@ create_game_button = NodePath("Lobby/CreateGameButton")
 start_game_button = NodePath("Lobby/LobbyThings/StartGameButton")
 room_code_label = NodePath("Lobby/LobbyThings/RoomCode")
 lobby_things = NodePath("Lobby/LobbyThings")
-player_list = NodePath("Lobby/LobbyThings/NamePoints")
+player_list = NodePath("Names")
 
 [node name="SocketIO" type="Node" parent="."]
 script = ExtResource("2_0xm2m")
@@ -106,7 +106,7 @@ grow_vertical = 2
 theme_override_font_sizes/font_size = 40
 text = "Start Game"
 
-[node name="NamePoints" type="Control" parent="Lobby/LobbyThings" node_paths=PackedStringArray("sceneRoot", "player_points", "names")]
+[node name="NamePoints" type="Control" parent="Lobby/LobbyThings"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -119,10 +119,7 @@ offset_right = 555.5
 offset_bottom = 217.5
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("3_h2yge")
-sceneRoot = NodePath("../../..")
-player_points = [NodePath("NamePoint"), NodePath("NamePoint2"), NodePath("NamePoint3"), NodePath("NamePoint4"), NodePath("NamePoint5"), NodePath("NamePoint6"), NodePath("NamePoint7"), NodePath("NamePoint8")]
-names = NodePath("../Names")
+mouse_filter = 1
 
 [node name="NamePoint" type="Node2D" parent="Lobby/LobbyThings/NamePoints"]
 position = Vector2(27, 135)
@@ -148,11 +145,6 @@ position = Vector2(601, 171)
 [node name="NamePoint8" type="Node2D" parent="Lobby/LobbyThings/NamePoints"]
 position = Vector2(695, 93)
 
-[node name="Names" type="Control" parent="Lobby/LobbyThings"]
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
 [node name="Writing" type="Control" parent="."]
 visible = false
 layout_mode = 1
@@ -177,6 +169,45 @@ theme_override_font_sizes/font_size = 71
 text = "Write your Responses Now!"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="NamePoints" type="Control" parent="Writing"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -360.0
+offset_top = 87.0
+offset_right = 360.0
+offset_bottom = 313.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="NamePoint" type="Node2D" parent="Writing/NamePoints"]
+position = Vector2(85, 169)
+
+[node name="NamePoint2" type="Node2D" parent="Writing/NamePoints"]
+position = Vector2(465, 92)
+
+[node name="NamePoint3" type="Node2D" parent="Writing/NamePoints"]
+position = Vector2(571, -8)
+
+[node name="NamePoint4" type="Node2D" parent="Writing/NamePoints"]
+position = Vector2(304, 18)
+
+[node name="NamePoint5" type="Node2D" parent="Writing/NamePoints"]
+position = Vector2(323, 194)
+
+[node name="NamePoint6" type="Node2D" parent="Writing/NamePoints"]
+position = Vector2(88, 17)
+
+[node name="NamePoint7" type="Node2D" parent="Writing/NamePoints"]
+position = Vector2(197, 103)
+
+[node name="NamePoint8" type="Node2D" parent="Writing/NamePoints"]
+position = Vector2(574, 193)
 
 [node name="Button2" type="Button" parent="."]
 visible = false
@@ -227,6 +258,21 @@ grow_horizontal = 2
 grow_vertical = 0
 theme_override_font_sizes/font_size = 80
 text = "Start Game"
+
+[node name="Names" type="Control" parent="." node_paths=PackedStringArray("sceneRoot", "player_points", "writing_points")]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -1280.0
+offset_bottom = -720.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+script = ExtResource("3_h2yge")
+sceneRoot = NodePath("..")
+player_points = [NodePath("../Lobby/LobbyThings/NamePoints/NamePoint"), NodePath("../Lobby/LobbyThings/NamePoints/NamePoint2"), NodePath("../Lobby/LobbyThings/NamePoints/NamePoint3"), NodePath("../Lobby/LobbyThings/NamePoints/NamePoint4"), NodePath("../Lobby/LobbyThings/NamePoints/NamePoint5"), NodePath("../Lobby/LobbyThings/NamePoints/NamePoint6"), NodePath("../Lobby/LobbyThings/NamePoints/NamePoint7"), NodePath("../Lobby/LobbyThings/NamePoints/NamePoint8")]
+writing_points = [NodePath("../Writing/NamePoints/NamePoint"), NodePath("../Writing/NamePoints/NamePoint2"), NodePath("../Writing/NamePoints/NamePoint3"), NodePath("../Writing/NamePoints/NamePoint4"), NodePath("../Writing/NamePoints/NamePoint5"), NodePath("../Writing/NamePoints/NamePoint6"), NodePath("../Writing/NamePoints/NamePoint7"), NodePath("../Writing/NamePoints/NamePoint8")]
 
 [node name="Timer" type="Timer" parent="."]
 wait_time = 120.0

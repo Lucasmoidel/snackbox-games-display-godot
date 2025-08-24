@@ -39,6 +39,7 @@ var prompt_one_votes: int = 0
 var prompt_two_votes: int = 0
 
 func _ready() -> void:
+	player_list.set_points_to_use('lobby')
 	dir = DirAccess.open('res://prompts')
 	get_tree().set_auto_accept_quit(false)
 	
@@ -122,6 +123,10 @@ var retried: bool = false
 
 func player_finished(id):
 	waiting_for.erase(id)
+	for each: Player in players:
+		if each.id == id:
+			player_list.add_player(each.name,id,false)
+			break
 	
 	if len(waiting_for) == 0:
 		print("ending start voting")
@@ -228,6 +233,7 @@ func send_vote():
 	client.emit('send-vote', {"responses":responses, "authors":authors, "voters":voters}, "/game")
 
 func start_voting():
+	player_list.clear_all()
 	var prompts_to_vote_on = send_vote()
 
 
@@ -242,4 +248,7 @@ func _on_start_game_button_pressed():
 	if gameState == GameState.LOBBY:
 		lobby.hide()
 		writing.show()
-		gameState = GameState.INSTRUCTION
+		player_list.clear_all()
+		player_list.set_points_to_use('writing')
+		pick_random_prompts()
+		gameState = GameState.WRITING
